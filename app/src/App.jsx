@@ -325,7 +325,7 @@ const App = () => {
             <div className="flex items-center font-instrumentSerif gap-2.5 group cursor-default">
               <div className="flex items-center justify-center">
                 {/* <img src="./flowreader.svg" className="w-20 h-20" alt="FlowReader Logo" /> */}
-                <h1 className="text-3xl flex font-semibold tracking-tight text-black leading-none">Flow{" "}
+                <h1 className="text-3xl flex font-instrumentSerif font-semibold tracking-tight text-black leading-none">Flow{" "}
                   
                   {/* Type 1 
                   <span className="ml-2 flex">
@@ -359,7 +359,7 @@ const App = () => {
                 */}
 
                 <span className="ml-2 flex">
-                {text.map((char, i) => {
+                {mode === 'input' ? text.map((char, i) => {
                   const isHighlighted = i <= index; // highlight the range 0..index
                   return (
                     <span
@@ -373,7 +373,7 @@ const App = () => {
                       {char}
                     </span>
                   );
-                })}
+                }) : "Reader"}
               </span>
                 </h1>
               </div>
