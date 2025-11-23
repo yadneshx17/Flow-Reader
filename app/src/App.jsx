@@ -113,6 +113,7 @@ const App = () => {
     return () => clearInterval(timer);
   }, [isCountingDown]);
   
+  // Handles Scroll of Text area
   useEffect(() => {
     if (!activeWordRef.current) return;
 
@@ -120,8 +121,21 @@ const App = () => {
       behavior: "smooth",
       block: "center"
     });
-  }, [currentIndex]);
+  }, [currentIndex, showInfo]);
 
+  // handle Escape
+  useEffect(() => {
+     const handleKeyDown = (e) => {
+      if(e.key === "Escape") {
+        setShowInfo(false);
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [showInfo])
+
+  // Kuch toh karta hai
   useEffect(() => {
     let interval = null;
     if (isPlaying && currentIndex < words.length) {
@@ -212,7 +226,7 @@ const App = () => {
               <div className="space-y-4 text-sm sm:text-base text-gray-600 font-body leading-relaxed">
                 <div>
                   <h3 className="text-black font-semibold mb-1 font-heading">The Problem: Eye Travel</h3>
-                  <p className='text-sm'>When you read normally, your eyes jerk from word to word (<strong className='text-neutral-700'>Saccades</strong>). This mechanical movement slows down comprehension and speed.</p>
+                  <p className='text-sm'>When you read normally, your eyes jerk from word to word (called <strong className='text-neutral-700'>_saccades</strong>). This mechanical movement slows down comprehension and speed.</p>
                 </div>
                 
                 <div>
@@ -305,7 +319,7 @@ const App = () => {
               {/* Text Area */}
               <div className="relative flex-1 rounded-xl overflow-hidden bg-white border border-gray-200 hover:border-gray-300 transition-colors focus-within:ring-2 focus-within:ring-black/5 focus-within:border-black">
                  <textarea
-                  className="w-full h-full p-6 bg-transparent text-base font-body leading-relaxed resize-none focus:outline-none placeholder:text-gray-500 text-gray-800"
+                  className="w-full h-full p-6 bg-transparent text-base font-body leading-relaxed resize-none focus:outline-none placeholder:text-gray-500/75 text-gray-800"
                   placeholder="Paste text or upload a file..."
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
