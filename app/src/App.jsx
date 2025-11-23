@@ -15,6 +15,75 @@ const App = () => {
   const [countDown, setCountDown] = useState(3);
   const [isCountingDown, setIsCountingDown] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
+
+  // Animation for Reader Type 1
+  // const text = "Reader".split("");
+  // const [index, setIndex] = useState(0);
+  // const [direction, setDirection] = useState(1); // 1 = left -> right, -1 = right -> left
+
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setIndex((prev) => {
+  //       const next = prev + direction;
+
+  //       if (next >= text.length - 1) {
+  //         setDirection(-1); // change direction at the end
+  //       } else if (next <= 0) {
+  //         setDirection(1); // change direction at the start
+  //       }
+
+  //       return next;
+  //     });
+  //   }, 500); // speed
+
+  //   return () => clearInterval(interval);
+  // }, [direction, text.length]);
+
+  // Animation for Reader Type 2
+  // const text = "Reader".split(""); 
+  // const [index, setIndex] = useState(0);
+
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setIndex((prev) => (prev + 1) % text.length); // loops start→end→start
+  //   }, 150);
+
+  //   return () => clearInterval(interval);
+  // }, [text.length]);
+  
+  // Animation type 3
+  const text = "Reader".split("");
+  const [index, setIndex] = useState(0);       // current end of the highlighted range (inclusive)
+  const [direction, setDirection] = useState(1); // 1 = expanding, -1 = shrinking
+
+   useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((prev) => {
+        // expanding
+        if (direction === 1) {
+          if (prev >= text.length - 1) {
+            // reached end -> switch to shrinking on next tick
+            setDirection(-1);
+            return prev - 1; // step one back so the next state starts shrinking
+          }
+          return prev + 1;
+        }
+
+        // shrinking
+        if (direction === -1) {
+          if (prev <= 0) {
+            // reached start -> switch to expanding on next tick
+            setDirection(1);
+            return prev + 1; // step one forward so expansion continues
+          }
+          return prev - 1;
+        }
+
+        return prev;
+      });
+    }, 400);
+    return () => clearInterval(interval);
+  }, [direction, 400, text.length]);
   
   const activeWordRef = useRef(null);
   const containerRef = useRef(null);
@@ -95,6 +164,7 @@ const App = () => {
     event.target.value = null;
   };
 
+  // Countdown Timer
   useEffect(() => {
     let timer;
     if (isCountingDown) {
@@ -112,7 +182,7 @@ const App = () => {
     }
     return () => clearInterval(timer);
   }, [isCountingDown]);
-  
+
   // Handles Scroll of Text area
   useEffect(() => {
     if (!activeWordRef.current) return;
@@ -251,11 +321,61 @@ const App = () => {
         <div className="w-full max-w-2xl flex flex-col h-[80vh]">
           
           {/* Header */}
-          <header className="flex justify-between items-center mb-6 px-2">
-            <div className="flex items-center gap-2.5 group cursor-default">
+          <header className="flex justify-between items-center mb-6 px-1">
+            <div className="flex items-center font-instrumentSerif gap-2.5 group cursor-default">
               <div className="flex items-center justify-center">
                 {/* <img src="./flowreader.svg" className="w-20 h-20" alt="FlowReader Logo" /> */}
-                <h1 className="text-3xl font-instrumentSerif font-bold tracking-tight text-black leading-none">Flow Reader</h1>
+                <h1 className="text-3xl flex font-semibold tracking-tight text-black leading-none">Flow{" "}
+                  
+                  {/* Type 1 
+                  <span className="ml-2 flex">
+                  {text.map((char, i) => (
+                    <span
+                      key={i}
+                      className={`transition-all duration-400 ${
+                        i === index
+                          ? "text-white bg-black rounded-sm scale-110 tracking-wider"
+                          : "text-black opacity-50"
+                      }`}
+                    >
+                      {char}
+                    </span>
+                  ))}
+                </span> */}
+
+                {/* Type 2 
+                <span className="ml-2 flex">
+                {text.map((char, i) => (
+                  <span
+                    key={i}
+                    className={`transition-all duration-150 
+                      ${i === index ? "text-white bg-black rounded-sm scale-110" : "text-black/75"}
+                    `}
+                  >
+                    {char}
+                  </span>
+                ))}
+                </span>
+                */}
+
+                <span className="ml-2 flex">
+                {text.map((char, i) => {
+                  const isHighlighted = i <= index; // highlight the range 0..index
+                  return (
+                    <span
+                      key={i}
+                      className={`inline-block transition-all duration-150 px-0.25 ${
+                        isHighlighted
+                          ? "text-white tracking-wider bg-black scale-105 rounded-xs"
+                          : "text-black/75"
+                      }`}
+                    >
+                      {char}
+                    </span>
+                  );
+                })}
+              </span>
+                </h1>
               </div>
             </div>
             
@@ -281,7 +401,7 @@ const App = () => {
               
               {/* Toolbar */}
               <div className="flex items-center justify-between mb-3 px-1">
-                <label className="text-xs font-bold text-neutral-400 font-heading uppercase tracking-wider">
+                <label className="text-xs font-bold text-neutral-400 font-heading uppercase tracking-wider select-none">
                   Source Material
                 </label>
                 
@@ -331,7 +451,7 @@ const App = () => {
               <div className="mt-6 flex items-center justify-between px-1">
                 <div className="flex flex-col gap-1">
                   <span className="text-[10px] font-bold text-gray-500 font-heading uppercase tracking-wider">Speed (WPM)</span>
-                  <div className="flex items-center gap-3 bg-white px-3 py-1.5 rounded-lg border border-gray-200">
+                  <div className="flex items-center gap-3 bg-white px-3 py-1.5 rounded-lg border border-gray-300">
                     <Settings2 size={12} className="text-gray-500" />
                     <input 
                       type="range" min="100" max="800" step="10"
@@ -343,15 +463,33 @@ const App = () => {
                   </div>
                 </div>
 
-                <button
+                <div className='relative group inline-block'>
+
+                  <button
                   onClick={handleStart}
                   disabled={!inputText.trim() || isLoading}
-                  className="group relative px-6 py-3 bg-black text-white rounded-lg font-heading font-bold text-sm hover:translate-y-[-1px] active:translate-y-[0px] shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                  className="px-6 py-3 bg-black text-white rounded-lg font-heading font-bold text-sm hover:translate-y-[-1px] active:translate-y-[0px] shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                 >
                   <span className="flex items-center gap-2">
                     START READING <Play size={14} fill="currentColor" />
                   </span>
                 </button>
+
+                {/* Tooltip */}
+                <div 
+                className={`absolute left-1/2 -translate-x-1/2 -top-10 px-3 py-2 w-[200px] flex items-center justify-center rounded-md text-xs font-medium text-white bg-black opacity-0 pointer-events-none translate-y-2 group-hover:-translate-y-2 transition-all duration-200 ${!inputText.trim() || isLoading ? 'group-hover:opacity-100' : 'group-hover:opacity-0'}`}
+                >
+                  Enter text to start reading
+                  {/* Arrow */}
+                  <div
+                    className="
+                      absolute left-1/2 top-full -translate-x-1/2 -translate-y-1
+                      w-2 h-2 bg-black rotate-45
+                    "
+                  />
+                </div>
+
+                </div>
               </div>
             </div>
           )}
