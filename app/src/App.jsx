@@ -15,6 +15,7 @@ const App = () => {
   const [countDown, setCountDown] = useState(3);
   const [isCountingDown, setIsCountingDown] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
+  const [isPulse, setIsPulse] = useState(true);
 
   // Animation for Reader Type 1
   // const text = "Reader".split("");
@@ -274,6 +275,7 @@ const App = () => {
 
   const handleInfo = () => {
     setShowInfo(!showInfo);
+    setIsPulse(!isPulse);
   };
 
   return (
@@ -383,15 +385,21 @@ const App = () => {
             <div className='flex items-center gap-2'>
               <button 
                 onClick={handleBackToEdit}
-                className="text-xs font-medium text-gray-500 hover:text-black transition-colors flex items-center gap-1.5 px-3 py-1.5 hover:bg-gray-100 rounded-md"
+                className="text-sm font-medium text-gray-500 hover:text-black transition-colors transition-all duration-150 flex items-center gap-1.5 px-3 py-1.5 hover:bg-gray-200 rounded-md"
               >
                 <Type size={14} /> Edit Text
               </button>
 
-              <CircleQuestionMark size={18} className='text-gray-500 hover:text-black active:scale-90' onClick={handleInfo}/>
+              <CircleQuestionMark size={18} className='text-gray-500 hover:text-black active:scale-90 cursor-pointer' onClick={handleInfo}/>
             </div>
             ) : (
-              <CircleQuestionMark size={18} className='text-gray-500 hover:text-black active:scale-90' onClick={handleInfo}/>
+              <div className="relative inline-block group cursor-pointer" onClick={handleInfo}>
+                <CircleQuestionMark size={18} className='text-gray-500 hover:text-black active:scale-90 cursor-pointer group-hover:text-black'/>
+
+                {isPulse && (
+                  <span className="absolute inset-0 rounded-full animate-ping bg-black opacity-50 group-hover:opacity-100"></span>
+                )}
+              </div>
             )}
           </header>
 
