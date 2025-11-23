@@ -358,7 +358,7 @@ const App = () => {
                 </span>
                 */}
 
-                <span className="ml-2 flex">
+                <span className="ml-2 flex items-center">
                 {mode === 'input' ? text.map((char, i) => {
                   const isHighlighted = i <= index; // highlight the range 0..index
                   return (
@@ -366,7 +366,7 @@ const App = () => {
                       key={i}
                       className={`inline-block transition-all duration-150 px-0.25 ${
                         isHighlighted
-                          ? "text-white tracking-wider bg-black scale-105 rounded-xs"
+                          ? "text-white tracking-wider h-8 bg-black scale-105 rounded-xs"
                           : "text-black/75"
                       }`}
                     >
